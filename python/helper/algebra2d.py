@@ -1,18 +1,13 @@
 import numpy as np
 import sympy as sp
-from sympy.parsing.sympy_parser import (
-    parse_expr, standard_transformations, implicit_multiplication, implicit_application)
-
-transformations = standard_transformations + \
-    (implicit_multiplication, implicit_application)
+from . import algebra as alg
 
 x, y = sp.symbols("x y")
 
 
 def getXYValuesFromYEq(yEq, xStart, xEnd):
-    # Function of z
-    yEq = yEq.replace("^", "**")
-    expr = parse_expr(yEq, transformations=transformations)
+    # Function of y
+    expr = alg.getExpr(yEq)
     fy = sp.lambdify([x], expr)
 
     # Setup of x and y Values
@@ -29,9 +24,8 @@ def getXYValuesFromYEq(yEq, xStart, xEnd):
 
 
 def getXYValuesFromXEq(xEq, yStart, yEnd):
-    # Function of z
-    xEq = xEq.replace("^", "**")
-    expr = parse_expr(xEq, transformations=transformations)
+    # Function of x
+    expr = alg.getExpr(xEq)
     fx = sp.lambdify([y], expr)
 
     # Setup of x and y Values

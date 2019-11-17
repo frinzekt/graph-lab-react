@@ -1,18 +1,13 @@
 import numpy as np
 import sympy as sp
-from sympy.parsing.sympy_parser import (
-    parse_expr, standard_transformations, implicit_multiplication, implicit_application)
-
-transformations = standard_transformations + \
-    (implicit_multiplication, implicit_application)
+from . import algebra as alg
 
 x, y, z = sp.symbols("x y z")
 
 
 def getZSurface(zEq, xStart, yStart, xEnd, yEnd):
     # Function of z
-    zEq = zEq.replace("^", "**")
-    expr = parse_expr(zEq, transformations=transformations)
+    expr = alg.getExpr(zEq)
     fz = sp.lambdify([x, y], expr)
 
     # Setup of x and y Values
@@ -27,13 +22,12 @@ def getZSurface(zEq, xStart, yStart, xEnd, yEnd):
         z1 = np.ndarray((len(xVals), len(yVals)))
         z1.fill(fz(0, 0))
 
-    return z1
+    return xVals, yVals, z1
 
 
 def getZMesh(zEq, start, end):
     # Function of z
-    zEq = zEq.replace("^", "**")
-    expr = parse_expr(zEq, transformations=transformations)
+    expr = alg.getExpr(zEq)
     fz = sp.lambdify([x, y], expr)
 
     # Setup of Values
@@ -47,4 +41,3 @@ def getZMesh(zEq, start, end):
         z1.fill(fz(0, 0))
 
     return z1
-
