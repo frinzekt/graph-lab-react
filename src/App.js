@@ -3,6 +3,11 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid, TextField } from "@material-ui/core";
 import Plot from "react-plotly.js";
 import Nav from "./components/nav";
+import "katex/dist/katex.min.css";
+import { InlineMath, BlockMath } from "react-katex";
+
+import Plot3D from "./components/Plot3D";
+import Input3D from "./components/Input3D";
 
 const useStyles = makeStyles(theme => ({
 	container: {
@@ -16,62 +21,99 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-export default function App() {
-	const classes = useStyles();
-	let z1 = [
-		[8.83, 8.89, 8.81, 8.87, 8.9, 8.87],
-		[8.89, 8.94, 8.85, 8.94, 8.96, 8.92],
-		[8.84, 8.9, 8.82, 8.92, 8.93, 8.91],
-		[8.79, 8.85, 8.79, 8.9, 8.94, 8.92],
-		[8.79, 8.88, 8.81, 8.9, 8.95, 8.92],
-		[8.8, 8.82, 8.78, 8.91, 8.94, 8.92],
-		[8.75, 8.78, 8.77, 8.91, 8.95, 8.92],
-		[8.8, 8.8, 8.77, 8.91, 8.95, 8.94],
-		[8.74, 8.81, 8.76, 8.93, 8.98, 8.99],
-		[8.89, 8.99, 8.92, 9.1, 9.13, 9.11],
-		[8.97, 8.97, 8.91, 9.09, 9.11, 9.11],
-		[9.04, 9.08, 9.05, 9.25, 9.28, 9.27],
-		[9, 9.01, 9, 9.2, 9.23, 9.2],
-		[8.99, 8.99, 8.98, 9.18, 9.2, 9.19],
-		[8.93, 8.97, 8.97, 9.18, 9.2, 9.18]
-	];
+export default class App extends React.Component {
+	state = {
+		zEquation: "x^2+2x",
+		xStart: 0,
+		yStart: 0,
+		xEnd: 10,
+		yEnd: 10,
 
-	let plotData = [
-		{
-			z: z1,
-			type: "surface"
-		}
-	];
+		graphData: {},
+		loading: true
+	};
 
-	console.log(classes);
-	return (
-		<React.Fragment>
-			<Nav></Nav>
+	reloadPlot() {
+		const url = "http://127.0.0.1:5000/3D";
+		const { zEquation, xStart, yStart, xEnd, yEnd } = this.state;
+		fetch(url, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				equation: zEquation,
+				xStart: parseFloat(xStart),
+				yStart: parseFloat(yStart),
+				xEnd: parseFloat(xEnd),
+				yEnd: parseFloat(yEnd)
+			})
+		})
+			.then(data => data.json())
+			.then(data => this.setState({ graphData: data }));
+	}
 
-			<Grid
-				container
-				direction="row"
-				justify="space-evenly"
-				alignItems="center"
-				alignContent="center"
-			>
-				<Grid item md={6} className="text-right">
-					<TextField
-						id="zEquation"
-						className={classes.textField}
-						label="Enter Z-Equation"
-						margin="normal"
-					></TextField>
+	async componentDidMount() {
+		this.reloadPlot();
+	}
+
+	handleChange = e => {
+		e.preventDefault();
+		const { id, value } = e.target;
+
+		// const { name, value } = e.target;
+		// let formErrors = this.state.formErrors;
+
+		// switch (name) {
+		// 	case "firstName":
+		// 		formErrors.firstName =
+		// 			value.length < 3 ? "minimum 3 characaters required" : ""; // TERNARY STATEMENT display error or no error
+		// 		break;
+		// 	case "lastName":
+		// 		formErrors.lastName =
+		// 			value.length < 3 ? "minimum 3 characaters required" : "";
+		// 		break;
+		// 	case "email":
+		// 		//EMAIL REGEX (regular expression) - tester
+		// 		formErrors.email = emailRegex.test(value)
+		// 			? ""
+		// 			: "invalid email address";
+		// 		break;
+		// 	case "password":
+		// 		formErrors.password =
+		// 			value.length < 6 ? "minimum 6 characaters required" : "";
+		// 		break;
+		// 	default:
+		// 		break;
+		// }
+
+		// this.setState({ formErrors, [name]: value });
+		this.setState({ [id]: value }, () => this.reloadPlot());
+	};
+
+	render() {
+		const classes = useStyles;
+
+		return (
+			<React.Fragment>
+				<Nav></Nav>
+
+				<Grid
+					container
+					direction="row"
+					justify="space-evenly"
+					alignItems="center"
+					alignContent="center"
+				>
+					<Grid item md={6} className="text-right">
+						<Input3D
+							classes={classes}
+							handleChange={this.handleChange}
+						></Input3D>
+					</Grid>
+					<Grid item md={6}>
+						<Plot3D {...this.state.graphData}></Plot3D>
+					</Grid>
 				</Grid>
-				<Grid item md={6}>
-					<Plot
-						data={plotData}
-						layout={{ title: "A Fancy Plot" }}
-						config={{ responsive: true }}
-						style={{ height: "90vh" }}
-					/>
-				</Grid>
-			</Grid>
-		</React.Fragment>
-	);
+			</React.Fragment>
+		);
+	}
 }
