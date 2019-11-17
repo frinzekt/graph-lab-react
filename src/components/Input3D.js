@@ -8,39 +8,49 @@ export const Input3D = props => (
 		<Container>
 			<TextField
 				id="zEquation"
+				name="zEquation"
 				className={props.classes.textField}
 				label="Enter Z-Equation"
 				margin="normal"
+				onChange={props.handleChange}
 			></TextField>
 		</Container>
 
 		<Container>
 			<TextField
 				id="xStart"
+				name="xStart"
 				className={props.classes.textField}
 				label="xStart"
 				margin="normal"
+				onChange={props.handleChange}
 			></TextField>
 			<TextField
-				id="y"
+				id="xEnd"
+				name="xEnd"
 				className={props.classes.textField}
 				label="xEnd"
 				margin="normal"
+				onChange={props.handleChange}
 			></TextField>
 		</Container>
 
 		<Container>
 			<TextField
-				id="xEnd"
+				id="yStart"
+				name="yStart"
 				className={props.classes.textField}
 				label="yStart"
 				margin="normal"
+				onChange={props.handleChange}
 			></TextField>
 			<TextField
 				id="yEnd"
+				name="yEnd"
 				className={props.classes.textField}
-				label="yStart"
+				label="yEnd"
 				margin="normal"
+				onChange={props.handleChange}
 			></TextField>
 		</Container>
 
