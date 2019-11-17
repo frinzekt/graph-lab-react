@@ -21,3 +21,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.pyc
+.vscode/settings.json
+raw.githubusercontent.com/plotly/datasets/master/mesh_dataset.txt
+python/helper/playground.py
+python/helper/file.py
