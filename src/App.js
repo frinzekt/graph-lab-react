@@ -34,7 +34,7 @@ export default class App extends React.Component {
 	};
 
 	reloadPlot() {
-		const url = "http://127.0.0.1:5000/3D";
+		const url = "https://graph-lab-flask.herokuapp.com/3D";
 		const { zEquation, xStart, yStart, xEnd, yEnd } = this.state;
 		fetch(url, {
 			method: "POST",
